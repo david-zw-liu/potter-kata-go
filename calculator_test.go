@@ -49,4 +49,41 @@ func TestCalBooksPrice(t *testing.T) {
 			})
 		}
 	})
+
+	t.Run("Sereral Combo cases", func(t *testing.T) {
+		examples := []struct {
+			name  string
+			books []int
+			want  float64
+		}{
+			{"Buy [1, 1, 2, 2, 3, 3, 4, 4] book", []int{1, 1, 2, 2, 3, 3, 4, 4}, price * 4 * 0.8 * 2},
+			{"Buy [1, 1, 2, 2, 3, 3, 4] book", []int{1, 1, 2, 2, 3, 3, 4}, price*4*0.8 + price*3*0.9},
+			{`Buy 
+				[
+					1, 2, 3, 4, 5,
+					1, 2, 3, 4,
+					1, 2, 3,
+					1, 2,
+					1,
+				] books`,
+				[]int{
+					1, 2, 3, 4, 5,
+					1, 2, 3, 4,
+					1, 2, 3,
+					1, 2,
+					1,
+				},
+				price*5*0.75 +
+					price*4*0.8 +
+					price*3*0.9 +
+					price*2*0.95 +
+					price,
+			},
+		}
+		for _, example := range examples {
+			t.Run(example.name, func(t *testing.T) {
+				assertBooksPrize(t, example.books, example.want)
+			})
+		}
+	})
 }
